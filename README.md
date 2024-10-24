@@ -7,7 +7,9 @@
 This project is to quickly remove unneeded things from github actions base
 images so my CI doesn't die running out of storage space!
 
-**THIS IS IN-PROGRESS AND NOT YET WORKING**
+As it stands you can look in my CI how I use it as I dogfood here. Deleting
+all the paths via rayon takes ~12s. Doing a `sudo rm -rf` with the list of
+paths took 1m15s when I tried it on our CI which also frees up about 15GB. 
 
 ## Motivation
 
