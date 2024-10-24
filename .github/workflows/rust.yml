@@ -41,4 +41,4 @@ jobs:
         with:
           toolchain: ${{ matrix.version }}
       - name: testy
-        run: strace -e trace=%file -f sudo apt-get remove -y '^mongodb-.*' --fix-missing
+        run: sudo strace -e trace=%file -f apt-get remove -y '^mongodb-.*' --fix-missing
