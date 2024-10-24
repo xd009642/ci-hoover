@@ -25,6 +25,6 @@ jobs:
       - name: check formatting
         run: cargo fmt -- --check
       - name: install
-        run: sudo cargo install --path . --root /bin
+        run: cargo build --release && sudo mv target/release/ci-hoover /bin
       - name: run
         run: sudo ci-hoover
