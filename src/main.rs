@@ -70,10 +70,20 @@ fn main() {
     let mut disks = Disks::new_with_refreshed_list();
     print_summary(&disks);
 
+    let mut ready_list: Vec<PathBuf> =
+        match ron::de::from_bytes(include_bytes!("../res/delete_list.ron").as_slice()) {
+            Ok(v) => v,
+            Err(e) => {
+                println!("Delete list invalid: {}", e);
+                vec![]
+            }
+        };
+
     println!("Deleting things!");
 
-    let _: Vec<_> = config
-        .get_paths()
+    ready_list.append(&mut config.get_paths());
+
+    let _: Vec<_> = ready_list
         .par_iter()
         .map(|x| fs::remove_dir_all(x))
         .collect();
