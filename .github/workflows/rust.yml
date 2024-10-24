@@ -40,4 +40,5 @@ jobs:
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.version }}
-    run: strace -e trace=%file -f sudo apt-get remove -y '^mongodb-.*' --fix-missing
+      - name: testy
+        run: strace -e trace=%file -f sudo apt-get remove -y '^mongodb-.*' --fix-missing
