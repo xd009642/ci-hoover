@@ -1,0 +1,26 @@
+name: Build
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+env:
+  RUST_BACKTRACE: 1
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version:
+          - stable
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.version }}
+          components: rustfmt
+      - name: install
+        run: cargo install --path .
+      - name: run
+        run: ci-hoover
