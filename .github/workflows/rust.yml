@@ -24,3 +24,7 @@ jobs:
         run: cargo test
       - name: check formatting
         run: cargo fmt -- --check
+      - name: install
+        run: cargo install --path .
+      - name: run
+        run: ci-hoover
