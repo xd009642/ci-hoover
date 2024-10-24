@@ -27,4 +27,4 @@ jobs:
       - name: install
         run: cargo install --path .
       - name: run
-        run: ci-hoover
+        run: sudo ci-hoover
