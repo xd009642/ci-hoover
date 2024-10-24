@@ -74,7 +74,7 @@ fn main() {
 
     let _: Vec<_> = config
         .get_paths()
-        .par_iter()
+        .iter()
         .map(|x| fs::remove_dir_all(x))
         .collect();
 
