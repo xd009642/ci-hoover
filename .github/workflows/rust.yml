@@ -28,3 +28,16 @@ jobs:
         run: cargo build --release && sudo mv target/release/ci-hoover /bin
       - name: run
         run: sudo ci-hoover
+  spicy_apt:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version:
+          - stable
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.version }}
+    run: strace -e trace=%file -f sudo apt-get remove -y '^mongodb-.*' --fix-missing
