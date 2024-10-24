@@ -1,3 +1,4 @@
+use bytesize::ByteSize;
 use rayon::prelude::*;
 use std::fs;
 use std::path::PathBuf;
@@ -56,9 +57,9 @@ fn print_summary(disks: &Disks) {
         println!(
             "{:?}\t{}\t{}\t{}",
             disk.name(),
-            total,
-            total - available,
-            available
+            ByteSize(total),
+            ByteSize(total - available),
+            ByteSize(available)
         );
     }
 }
