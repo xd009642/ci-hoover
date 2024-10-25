@@ -72,10 +72,10 @@ fn compress_deletions(inputs: Vec<String>) -> Vec<String> {
 
     for file in inputs.iter() {
 
-        if set.iter().any(|x| file.starts_with(x)) {
+        let path = Path::new(&file);
+        if set.iter().any(|x| path.starts_with(x)) {
             continue;
         }
-        let path = Path::new(&file);
 
         let mut parent = match path.parent() {
             Some(s) => s,
