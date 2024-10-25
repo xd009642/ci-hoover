@@ -41,12 +41,10 @@ fn process_strace_output(output: &[u8]) -> Vec<String> {
         }
     }
     result.dedup();
-    println!("Got: {:?}", result);
     result
 }
 
 fn remove_packages(packages: &[&str]) -> Vec<String> {
-    println!("Removing: {:?}", packages);
     let strace_out = Command::new("strace")
         .args(["-e", "trace=%file", "-f", "apt-get", "remove", "-y"])
         .args(packages)
@@ -86,6 +84,7 @@ fn compress_deletions(inputs: Vec<String>) -> Vec<String> {
         } else {
             while let Some(new_parent) = parent.parent() {
                 if new_parent.exists() {
+                    println!("Reduced {} to {}", path.display(), parent.display());
                     set.insert(parent.display().to_string());
                     break;
                 } else {
