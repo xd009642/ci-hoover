@@ -1,6 +1,7 @@
 use ron::ser::*;
+use std::collections::BTreeSet;
 use std::fs;
-use std::path::MAIN_SEPARATOR_STR;
+use std::path::{Path, MAIN_SEPARATOR_STR};
 use std::process::Command;
 
 fn process_strace_output(output: &[u8]) -> Vec<String> {
@@ -65,6 +66,32 @@ fn cleanup() -> Vec<String> {
     process_strace_output(&strace_out.stderr)
 }
 
+fn compress_deletions(inputs: Vec<String>) -> Vec<String> {
+    let mut set = BTreeSet::new();
+
+    for file in inputs.iter() {
+        if set.iter().any(|x| file.starts_with(x)) {
+            continue;
+        }
+        let path = Path::new(&file);
+
+        let mut parent = match path.parent() {
+            Some(s) => s,
+            None => continue,
+        };
+        while let Some(new_parent) = parent.parent() {
+            if new_parent.exists() {
+                set.insert(parent.display().to_string());
+                break;
+            } else {
+                parent = new_parent
+            }
+        }
+    }
+
+    set.into_iter().collect()
+}
+
 fn main() {
     let mut result = vec![];
     result.append(&mut remove_packages(&["'^aspnetcore-.*'"]));
@@ -87,8 +114,7 @@ fn main() {
     result.sort();
     result.dedup();
 
-    // TODO We could do another step here where we go up the folders and figure out the least amount of
-    // deletions we can do
+    let result = compress_deletions(result);
 
     let data = to_string_pretty(&result, PrettyConfig::new()).expect("Unable to write RON");
     fs::write("res/delete_list.ron", data).expect("Failed to save file");
