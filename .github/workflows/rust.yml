@@ -40,5 +40,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.version }}
-      - name: testy
-        run: sudo strace -e trace=%file -f apt-get remove -y azure-cli google-chrome-stable firefox powershell mono-devel libgl1-mesa-dri --fix-missing 
+      - name: build
+        run: cd strace-analysis && cargo build --release && sudo mv target/release/strace-analysis /bin
+      - name: analyse
+        run: sudo strace-analysis
