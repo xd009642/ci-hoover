@@ -99,6 +99,9 @@ fn compress_deletions(inputs: Vec<String>) -> Vec<String> {
 }
 
 fn main() {
+    // Credit should go to pr2502 for thinking of this idea on how to make my apt removals go
+    // brrrrrr
+
     let mut result = vec![];
     result.append(&mut remove_packages(&["'^aspnetcore-.*'"]));
     result.append(&mut remove_packages(&["'^dotnet-.*'"]));
