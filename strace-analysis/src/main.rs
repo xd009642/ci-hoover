@@ -88,12 +88,12 @@ fn compress_deletions(inputs: Vec<String>) -> Vec<String> {
                     set.insert(parent.display().to_string());
                     break;
                 } else {
+                    println!("Going from {} to {}", parent.display(), new_parent.display());
                     parent = new_parent
                 }
             }
         }
     }
-
     set.into_iter().collect()
 }
 
