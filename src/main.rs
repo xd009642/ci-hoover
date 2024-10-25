@@ -90,8 +90,8 @@ fn remove_path(x: impl AsRef<Path>) {
 fn main() {
     let start = Instant::now();
     let config = match envy::from_env::<Config>() {
-       Ok(config) => config,
-       Err(error) => panic!("{:#?}", error)
+        Ok(config) => config,
+        Err(error) => panic!("{:#?}", error),
     };
     let mut disks = Disks::new_with_refreshed_list();
     print_summary(&disks);
