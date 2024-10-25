@@ -1,7 +1,10 @@
 use bytesize::ByteSize;
 use rayon::prelude::*;
+use std::env;
 use std::fs;
 use std::path::PathBuf;
+use std::process::Command;
+use std::thread;
 use std::time::Instant;
 use sysinfo::Disks;
 
@@ -45,6 +48,16 @@ impl Config {
         if self.haskell {
             res.extend(Self::HASKELL.iter().map(PathBuf::from));
         }
+        if self.tools_cache {
+            match env::var("AGENT_TOOLSDIRECTORY") {
+                Ok(s) => res.push(PathBuf::from(s)),
+                Err(_) => (),
+            }
+        }
+        if self.swap_storage {
+            let _ = Command::new("swapoff").arg("-a").output();
+            res.push(PathBuf::from("/mnt/swapfile"));
+        }
         res
     }
 }
@@ -70,14 +83,27 @@ fn main() {
     let mut disks = Disks::new_with_refreshed_list();
     print_summary(&disks);
 
-    let mut ready_list: Vec<PathBuf> =
+    let do_docker = config.docker_images;
+
+    let docker_thread = thread::spawn(move || {
+        if do_docker {
+            let _ = Command::new("docker")
+                .args(["image", "prune", "--all", "--force"])
+                .output();
+        }
+    });
+
+    let mut ready_list: Vec<PathBuf> = if config.large_packages {
         match ron::de::from_bytes(include_bytes!("../res/delete_list.ron").as_slice()) {
             Ok(v) => v,
             Err(e) => {
                 println!("Delete list invalid: {}", e);
                 vec![]
             }
-        };
+        }
+    } else {
+        vec![]
+    };
 
     println!("Deleting things!");
 
@@ -87,6 +113,9 @@ fn main() {
         .par_iter()
         .map(|x| fs::remove_dir_all(x))
         .collect();
+
+    // Join docker thread
+    let _ = docker_thread.join();
 
     // Going to assume a disk hasn't been added/removed
     disks.refresh();

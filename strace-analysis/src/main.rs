@@ -79,12 +79,16 @@ fn compress_deletions(inputs: Vec<String>) -> Vec<String> {
             Some(s) => s,
             None => continue,
         };
-        while let Some(new_parent) = parent.parent() {
-            if new_parent.exists() {
-                set.insert(parent.display().to_string());
-                break;
-            } else {
-                parent = new_parent
+        if parent.exists() {
+            set.insert(file.clone());
+        } else {
+            while let Some(new_parent) = parent.parent() {
+                if new_parent.exists() {
+                    set.insert(parent.display().to_string());
+                    break;
+                } else {
+                    parent = new_parent
+                }
             }
         }
     }
