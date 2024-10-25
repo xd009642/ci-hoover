@@ -1,14 +1,30 @@
+use std::fs;
 use std::process::Command;
 
 fn process_strace_output(output: &[u8]) -> Vec<String> {
     let string = String::from_utf8_lossy(output);
+    let mut result = vec![];
 
     for line in string.lines() {
         if line.ends_with("= 0") && (line.contains("unlink") || line.contains("rmdir")) {
             println!("{}", line);
+            let mut tmp = line.to_string();
+            let mut keep = false;
+            tmp.retain(|c| {
+                if c == '(' {
+                    keep = true;
+                    false
+                } else if c == ')' {
+                    keep = false;
+                    false
+                } else {
+                    keep
+                }
+            });
+            result.push(tmp);
         }
     }
-    vec![]
+    result
 }
 
 fn remove_packages(packages: &[&str]) -> Vec<String> {
@@ -32,20 +48,26 @@ fn cleanup() -> Vec<String> {
 }
 
 fn main() {
-    remove_packages(&["'^aspnetcore-.*'"]);
-    remove_packages(&["'^dotnet-.*'"]);
-    remove_packages(&["'^llvm-.*'"]);
-    remove_packages(&["'php.*'"]);
-    remove_packages(&[
+    let mut result = vec![];
+    result.append(&mut remove_packages(&["'^aspnetcore-.*'"]));
+    result.append(&mut remove_packages(&["'^dotnet-.*'"]));
+    result.append(&mut remove_packages(&["'^llvm-.*'"]));
+    result.append(&mut remove_packages(&["'php.*'"]));
+    result.append(&mut remove_packages(&[
         "azure-cli",
         "google-chrome-stable",
         "firefox",
         "powershell",
         "mono-devel",
         "libgl1-mesa-dri",
-    ]);
-    remove_packages(&["google-cloud-sdk"]);
-    remove_packages(&["google-cloud-cli"]);
+    ]));
+    result.append(&mut remove_packages(&["google-cloud-sdk"]));
+    result.append(&mut remove_packages(&["google-cloud-cli"]));
 
-    cleanup();
+    result.append(&mut cleanup());
+
+    result.sort();
+
+    let data = ron::to_string(&result).expect("Unable to write RON");
+    fs::write("../res/delete_list.ron", data).expect("Failed to save file");
 }
