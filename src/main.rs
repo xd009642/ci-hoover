@@ -9,14 +9,25 @@ use std::thread;
 use std::time::Instant;
 use sysinfo::Disks;
 
+const fn true_value() -> bool {
+    true
+}
+
 #[derive(Clone, Debug, Deserialize)]
 pub struct Config {
+    #[serde(default = "true_value")]
     android: bool,
+    #[serde(default = "true_value")]
     dot_net: bool,
+    #[serde(default = "true_value")]
     haskell: bool,
+    #[serde(default = "true_value")]
     large_packages: bool,
+    #[serde(default = "true_value")]
     docker_images: bool,
+    #[serde(default = "true_value")]
     tools_cache: bool,
+    #[serde(default = "true_value")]
     swap_storage: bool,
 }
 
