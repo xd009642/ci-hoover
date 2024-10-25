@@ -1,6 +1,13 @@
 [package]
 name = "ci-hoover"
 version = "0.1.0"
+authors = ["Daniel McKenna <danielmckenna93@gmail.com>"]
+description = "ci-hoover will delete stuff you don't want from github actions runners"
+repository = "https://github.com/xd009642/ci-hoover"
+readme = "README.md"
+license = "MIT"
+categories = ["development-tools", "ci"]
+keywords = ["ci", "cleanup"]
 edition = "2021"
 
 [dependencies]
