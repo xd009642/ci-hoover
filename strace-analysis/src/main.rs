@@ -68,8 +68,10 @@ fn cleanup() -> Vec<String> {
 
 fn compress_deletions(inputs: Vec<String>) -> Vec<String> {
     let mut set = BTreeSet::new();
+    set.insert("/var/cache".to_string());
 
     for file in inputs.iter() {
+
         if set.iter().any(|x| file.starts_with(x)) {
             continue;
         }
