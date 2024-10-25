@@ -1,6 +1,6 @@
 use ron::ser::*;
 use std::fs;
-use std::path::Path;
+use std::path::MAIN_SEPARATOR_STR;
 use std::process::Command;
 
 fn process_strace_output(output: &[u8]) -> Vec<String> {
@@ -22,28 +22,29 @@ fn process_strace_output(output: &[u8]) -> Vec<String> {
                     keep
                 }
             });
-            for maybe_path in tmp.split(",") {
+            for maybe_path in tmp.split(",").filter(|x| x.contains(MAIN_SEPARATOR_STR)) {
                 let tmp = maybe_path
                     .trim_start_matches("\"")
                     .trim_end_matches("\"")
                     .to_string();
 
-                if Path::new(&tmp).exists() {
-                    // Do a cheeky filter out of files in directory
-                    if line.contains("rmdir") {
-                        result.retain(|x: &String| !x.starts_with(&tmp));
-                    }
-                    if !tmp.is_empty() {
-                        result.push(tmp);
-                    }
+                // Do a cheeky filter out of files in directory
+                if line.contains("rmdir") {
+                    result.retain(|x: &String| !x.starts_with(&tmp));
+                }
+                if !tmp.is_empty() {
+                    result.push(tmp);
                 }
             }
         }
     }
+    result.dedup();
+    println!("Got: {:?}", result);
     result
 }
 
 fn remove_packages(packages: &[&str]) -> Vec<String> {
+    println!("Removing: {:?}", packages);
     let strace_out = Command::new("strace")
         .args(["-e", "trace=%file", "-f", "apt-get", "remove", "-y"])
         .args(packages)
@@ -83,6 +84,7 @@ fn main() {
     result.append(&mut cleanup());
 
     result.sort();
+    result.dedup();
 
     let data = to_string_pretty(&result, PrettyConfig::new()).expect("Unable to write RON");
     fs::write("res/delete_list.ron", data).expect("Failed to save file");
