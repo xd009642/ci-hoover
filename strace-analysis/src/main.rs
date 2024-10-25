@@ -7,7 +7,6 @@ fn process_strace_output(output: &[u8]) -> Vec<String> {
 
     for line in string.lines() {
         if line.ends_with("= 0") && (line.contains("unlink") || line.contains("rmdir")) {
-            println!("{}", line);
             let mut tmp = line.to_string();
             let mut keep = false;
             tmp.retain(|c| {
@@ -21,6 +20,10 @@ fn process_strace_output(output: &[u8]) -> Vec<String> {
                     keep
                 }
             });
+            // Do a cheeky filter out of files in directory
+            if line.contains("rmdir") {
+                result.retain(|x| !x.starts_with(&tmp));
+            }
             result.push(tmp);
         }
     }
