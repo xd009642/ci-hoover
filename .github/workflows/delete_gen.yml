@@ -1,0 +1,37 @@
+name: Delete List Gen
+permissions:
+  contents: write
+  pull-requests: write
+on:
+  push:
+    branches:
+      - "main"
+jobs:
+  spicy_apt:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version:
+          - stable
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.version }}
+      - name: build
+        run: cd strace-analysis && cargo build --release && sudo mv target/release/strace-analysis /bin
+      - name: analyse
+        run: sudo strace-analysis
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7       
+        with:
+          token: ${{ secrets.PAT }}
+          commit-message: Update delete list
+          committer: xd009642 <danielmckenna93@gmail.com>
+          author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
+          signoff: false
+          branch: delete-list-update
+          delete-branch: true
+          title: '[BOT] Update delete list'
+

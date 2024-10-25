@@ -1,3 +1,4 @@
+use ron::ser::*;
 use std::fs;
 use std::process::Command;
 
@@ -20,10 +21,15 @@ fn process_strace_output(output: &[u8]) -> Vec<String> {
                     keep
                 }
             });
+            let tmp = tmp.split(",").next().unwrap();
             // Do a cheeky filter out of files in directory
             if line.contains("rmdir") {
-                result.retain(|x: &String| !x.starts_with(&tmp));
+                result.retain(|x: &String| !x.starts_with(tmp));
             }
+            let tmp = tmp
+                .trim_start_matches("\"")
+                .trim_end_matches("\"")
+                .to_string();
             result.push(tmp);
         }
     }
@@ -71,6 +77,6 @@ fn main() {
 
     result.sort();
 
-    let data = ron::to_string(&result).expect("Unable to write RON");
+    let data = to_string_pretty(&result, PrettyConfig::new()).expect("Unable to write RON");
     fs::write("res/delete_list.ron", data).expect("Failed to save file");
 }
