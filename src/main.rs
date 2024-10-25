@@ -1,5 +1,6 @@
 use bytesize::ByteSize;
 use rayon::prelude::*;
+use serde::Deserialize;
 use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -8,6 +9,7 @@ use std::thread;
 use std::time::Instant;
 use sysinfo::Disks;
 
+#[derive(Clone, Debug, Deserialize)]
 pub struct Config {
     android: bool,
     dot_net: bool,
@@ -87,7 +89,10 @@ fn remove_path(x: impl AsRef<Path>) {
 
 fn main() {
     let start = Instant::now();
-    let config = Config::default();
+    let config = match envy::from_env::<Config>() {
+       Ok(config) => config,
+       Err(error) => panic!("{:#?}", error)
+    };
     let mut disks = Disks::new_with_refreshed_list();
     print_summary(&disks);
 

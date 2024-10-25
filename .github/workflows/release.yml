@@ -1,0 +1,49 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '[0-9]+.*'
+jobs:
+  create-release:
+    name: "Create GitHub release"
+    # only publish from the origin repository
+    if: github.repository_owner == 'xd009642'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: taiki-e/create-gh-release-action@v1
+        with:
+          changelog: CHANGELOG.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  crates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: publish package to crates
+        run: |
+          cargo package
+          cargo publish --token ${{ secrets.CARGO_TOKEN }}
+
+  binaries:
+    name: "Upload release binaries"
+    needs:
+      - create-release
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: taiki-e/upload-rust-binary-action@v1
+        with:
+          bin: ci-hoover
+          target: ${{ matrix.target }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

@@ -1,0 +1,64 @@
+name: "ci-hoover"
+description: "A configurable GitHub Action to free up disk space on an Ubuntu GitHub Actions runner. Inspired by free-disk-space."
+
+# See: https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#branding
+branding:
+  icon: "trash-2"
+  color: "orange"
+
+inputs:
+  android:
+    description: "Remove Android runtime"
+    required: false
+    default: "true"
+  dotnet:
+    description: "Remove .NET runtime"
+    required: false
+    default: "true"
+  haskell:
+    description: "Remove Haskell runtime"
+    required: false
+    default: "true"
+
+  # option inspired by:
+  # https://github.com/apache/flink/blob/master/tools/azure-pipelines/free_disk_space.sh
+  large-packages:
+    description: "Remove large packages"
+    required: false
+    default: "true"
+
+  docker-images:
+    description: "Remove Docker images"
+    required: false
+    default: "true"
+
+  # option inspired by:
+  # https://github.com/actions/virtual-environments/issues/2875#issuecomment-1163392159
+  tool-cache:
+    description: "Remove image tool cache"
+    required: false
+    default: "false"
+
+  swap-storage:
+    description: "Remove swap storage"
+    required: false
+    default: "true"
+
+runs:
+  using: "composite"
+  steps:
+    - uses: cargo-bins/cargo-binstall@main
+      run: |
+        set -eu
+        export ANDROID = ${{ inputs.android }}
+        export DOT_NET = ${{ inputs.dot_net }}
+        export HASKELL = ${{ inputs.haskell }}
+        export LARGE_PACKAGES = ${{ inputs.large_packages }}
+        export DOCKER_IMAGES = ${{ inputs.docker_images }}
+        export TOOLS_CACHE = ${{ inputs.tools_cache }}
+        export SWAP_STORAGE = ${{ inputs.swap_storage }}
+
+        cargo binstall ci-hoover
+
+        sudo ci-hoover
+
