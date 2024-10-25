@@ -22,7 +22,7 @@ fn process_strace_output(output: &[u8]) -> Vec<String> {
             });
             // Do a cheeky filter out of files in directory
             if line.contains("rmdir") {
-                result.retain(|x| !x.starts_with(&tmp));
+                result.retain(|x: &String| !x.starts_with(&tmp));
             }
             result.push(tmp);
         }
