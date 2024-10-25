@@ -80,7 +80,14 @@ fn compress_deletions(inputs: Vec<String>) -> Vec<String> {
             None => continue,
         };
         if parent.exists() {
-            set.insert(file.clone());
+            let parent_is_empty = fs::read_dir(parent).map(|x| x.next().is_none()).unwrap_or(false);
+            if parent_is_empty {
+                println!("Removing parent: {}", parent.display());
+                set.insert(parent.display().to_string());
+            } else {
+                println!("Removing file: {}", file);
+                set.insert(file.clone());
+            }
         } else {
             while let Some(new_parent) = parent.parent() {
                 if new_parent.exists() {
