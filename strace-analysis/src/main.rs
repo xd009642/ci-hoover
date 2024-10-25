@@ -24,6 +24,7 @@ fn process_strace_output(output: &[u8]) -> Vec<String> {
             });
             for maybe_path in tmp.split(",").filter(|x| x.contains(MAIN_SEPARATOR_STR)) {
                 let tmp = maybe_path
+                    .trim()
                     .trim_start_matches("\"")
                     .trim_end_matches("\"")
                     .to_string();
@@ -85,6 +86,9 @@ fn main() {
 
     result.sort();
     result.dedup();
+
+    // TODO We could do another step here where we go up the folders and figure out the least amount of
+    // deletions we can do
 
     let data = to_string_pretty(&result, PrettyConfig::new()).expect("Unable to write RON");
     fs::write("res/delete_list.ron", data).expect("Failed to save file");
