@@ -4,7 +4,7 @@ fn process_strace_output(output: &[u8]) -> Vec<String> {
     let string = String::from_utf8_lossy(output);
 
     for line in string.lines() {
-        if line.contains("unlink") || line.contains("rmdir") {
+        if line.endswith("= 0") && (line.contains("unlink") || line.contains("rmdir")) {
             println!("{}", line);
         }
     }
