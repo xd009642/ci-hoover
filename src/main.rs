@@ -2,7 +2,7 @@ use bytesize::ByteSize;
 use rayon::prelude::*;
 use std::env;
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::thread;
 use std::time::Instant;
@@ -77,6 +77,14 @@ fn print_summary(disks: &Disks) {
     }
 }
 
+fn remove_path(x: impl AsRef<Path>) {
+    if x.as_ref().is_file() {
+        let _ = fs::remove_file(x);
+    } else {
+        let _ = fs::remove_dir_all(x);
+    }
+}
+
 fn main() {
     let start = Instant::now();
     let config = Config::default();
@@ -109,10 +117,7 @@ fn main() {
 
     ready_list.append(&mut config.get_paths());
 
-    let _: Vec<_> = ready_list
-        .par_iter()
-        .map(|x| fs::remove_dir_all(x))
-        .collect();
+    let _: Vec<_> = ready_list.par_iter().map(|x| remove_path(x)).collect();
 
     // Join docker thread
     let _ = docker_thread.join();
