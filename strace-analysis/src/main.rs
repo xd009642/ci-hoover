@@ -72,5 +72,5 @@ fn main() {
     result.sort();
 
     let data = ron::to_string(&result).expect("Unable to write RON");
-    fs::write("../res/delete_list.ron", data).expect("Failed to save file");
+    fs::write("res/delete_list.ron", data).expect("Failed to save file");
 }
