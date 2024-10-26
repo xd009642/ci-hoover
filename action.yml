@@ -48,6 +48,7 @@ runs:
   using: "composite"
   steps:
     - uses: cargo-bins/cargo-binstall@main
+    - shell: bash
       run: |
         set -eu
         export ANDROID = ${{ inputs.android }}
