@@ -122,6 +122,7 @@
     "/usr/bin/vbc",
     "/usr/bin/wsdl",
     "/usr/bin/wsdl2",
+    "/usr/bin/xargs",
     "/usr/bin/xbuild",
     "/usr/bin/xkbbell",
     "/usr/bin/xkbcomp",
