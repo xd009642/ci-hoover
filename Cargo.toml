@@ -1,6 +1,6 @@
 [package]
 name = "ci-hoover"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Daniel McKenna <danielmckenna93@gmail.com>"]
 description = "ci-hoover will delete stuff you don't want from github actions runners"
 repository = "https://github.com/xd009642/ci-hoover"

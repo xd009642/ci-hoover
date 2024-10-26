@@ -9,4 +9,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: ci-hoover
-        uses: xd009642/ci-hoover@test5
+        uses: xd009642/ci-hoover@0.1.1
