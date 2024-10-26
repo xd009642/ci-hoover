@@ -59,7 +59,7 @@ runs:
         export TOOLS_CACHE=${{ inputs.tools_cache }}
         export SWAP_STORAGE=${{ inputs.swap_storage }}
 
-        cargo binstall ci-hoover
+        cargo binstall -y ci-hoover
 
         sudo ci-hoover
 
