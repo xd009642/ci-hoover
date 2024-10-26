@@ -1,0 +1,13 @@
+name: Marketplace
+on:
+  push:
+    branches:
+      - "main"
+  pull_request:
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ci-hoover
+        uses: xd009642/ci-hoover@0.1.0
+
