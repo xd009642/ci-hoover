@@ -60,6 +60,7 @@ runs:
         export SWAP_STORAGE=${{ inputs.swap_storage }}
 
         cargo binstall -y ci-hoover
+        sudo mv .cargo/bin/ci-hoover /bin
 
         sudo ci-hoover
 
