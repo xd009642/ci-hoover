@@ -6,7 +6,7 @@ description = "ci-hoover will delete stuff you don't want from github actions ru
 repository = "https://github.com/xd009642/ci-hoover"
 readme = "README.md"
 license = "MIT"
-categories = ["development-tools", "ci"]
+categories = ["development-tools"]
 keywords = ["ci", "cleanup"]
 edition = "2021"
 
