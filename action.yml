@@ -51,13 +51,13 @@ runs:
     - shell: bash
       run: |
         set -eu
-        export ANDROID = ${{ inputs.android }}
-        export DOT_NET = ${{ inputs.dot_net }}
-        export HASKELL = ${{ inputs.haskell }}
-        export LARGE_PACKAGES = ${{ inputs.large_packages }}
-        export DOCKER_IMAGES = ${{ inputs.docker_images }}
-        export TOOLS_CACHE = ${{ inputs.tools_cache }}
-        export SWAP_STORAGE = ${{ inputs.swap_storage }}
+        export ANDROID=${{ inputs.android }}
+        export DOT_NET=${{ inputs.dot_net }}
+        export HASKELL=${{ inputs.haskell }}
+        export LARGE_PACKAGES=${{ inputs.large_packages }}
+        export DOCKER_IMAGES=${{ inputs.docker_images }}
+        export TOOLS_CACHE=${{ inputs.tools_cache }}
+        export SWAP_STORAGE=${{ inputs.swap_storage }}
 
         cargo binstall ci-hoover
 
